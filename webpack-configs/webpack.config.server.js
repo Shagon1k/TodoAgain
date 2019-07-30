@@ -1,8 +1,8 @@
 const webpack = require('webpack');
 const path = require('path');
 
-module.exports ={
-	entry: './src/server/index.js',
+const serverConfig = {
+	entry: ['babel-polyfill', './src/server/index.js'],
 	output: {
 		path: path.resolve(__dirname, '../public/'),
 		publicPath: '../public/',
@@ -13,9 +13,15 @@ module.exports ={
 		rules: [
 			{
 				test: /\.(js|jsx)$/,
-				exclude: /node_modules/,
-				loader: 'babel-loader'
+        exclude: /node_modules/,
+        use: [
+          {
+            loader: 'babel-loader',
+          }
+        ]
 			}
 		]
 	},
 };
+
+module.exports = serverConfig;

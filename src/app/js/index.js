@@ -6,7 +6,7 @@ import { Provider as ReduxProvider } from "react-redux";
 import configureStore from './configureStore.js'
 
 
-const store = configureStore(window.PRELOADED_STATE)
+const store = configureStore({isSSR: false})(window.__PRELOADED_STATE__)
 delete window.PRELOADED_STATE
 
 hydrate(

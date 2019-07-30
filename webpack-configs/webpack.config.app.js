@@ -2,11 +2,12 @@ const webpack = require('webpack');
 const path = require('path');
 const UglifyJsPlugin = require('uglifyjs-webpack-plugin');
 
-module.exports = {
-	entry: ["react-hot-loader/patch", "./src/app/js"],
+const clientConfig = {
+	entry: ['babel-polyfill', './src/app/js'],
 	output: {
 		path: path.resolve(__dirname, '../public/'),
-		publicPath: '../public/',
+    publicPath: '../public/',
+    chunkFilename: '[name].[contenthash].bundle.js',
 		filename: 'bundle.js'
 	},
 	module: {
@@ -26,3 +27,5 @@ module.exports = {
 		})
 	]
 }
+
+module.exports = clientConfig;

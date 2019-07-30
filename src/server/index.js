@@ -13,7 +13,7 @@ const app = express();
 
 app.use(express.static('public'));
 
-const renderFullPage = (html) => (
+const renderFullPage = (html, preloadedReduxState) => (
 	`<!DOCTYPE html>
 	<html lang="en">
 	<head>
@@ -23,28 +23,33 @@ const renderFullPage = (html) => (
 		<script defer src="bundle.js"></script>
 	</head>
 	<body>
-		<div id="app">${html}</div>
+    <div id="app">${html}</div>
+    <script>
+      window.__PRELOADED_STATE__ = ${JSON.stringify(preloadedReduxState).replace(/</g, '\\u003c')}
+    </script>
 	</body>
 	</html>`
 );
 
 const handleRender = (req, res) => {
 	const context = {};
-	const store = configureStore();
-	const app = (
+	const store = configureStore({isSSR: true})();
+	const application = (
 		<ReduxProvider store={ store }>
 			<StaticRouter location={req.url} context={context}>
 				<App />
 			</StaticRouter>
 		</ReduxProvider>
 		)
-	const renderedApp = ReactDOMServer.renderToString(app);
+	const renderedApp = ReactDOMServer.renderToString(application);
 
 	if (context.url) {
 		return res.redirect(context.url)
-	}
+  }
+  
+  const preloadedReduxState = store.getState();
 
-	res.send(renderFullPage(renderedApp));
+	res.send(renderFullPage(renderedApp, preloadedReduxState));
 }
 
 app.get('*', handleRender);
